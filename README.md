@@ -6,6 +6,7 @@
 
 **A fully offline React Native app for Delhi NCR metro commuters — route planning, fares, the full network map, and more, backed by a hand-built offline pathfinding engine.**
 
+[![CI](https://github.com/mukeshkumar356/metro-saathi/actions/workflows/react-native-ci.yml/badge.svg)](https://github.com/mukeshkumar356/metro-saathi/actions/workflows/react-native-ci.yml)
 [![Platform](https://img.shields.io/badge/platform-Android-3DDC84?logo=android&logoColor=white)](#)
 [![Framework](https://img.shields.io/badge/framework-React%20Native-61DAFB?logo=react&logoColor=white)](#)
 [![Language](https://img.shields.io/badge/language-TypeScript-3178C6?logo=typescript&logoColor=white)](#)
