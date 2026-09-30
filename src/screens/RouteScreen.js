@@ -23,6 +23,22 @@ const findRoute = (fromId, toId) => {
         adj[stns[i - 1]].push({ id: stns[i], line: lineKey });
       }
     }
+    // Branch lines (e.g. Blue Line splits past Yamuna Bank into the
+    // Vaishali and Noida Electronic City branches) diverge from the last
+    // main-line station and were never linked here, leaving every branch
+    // station unreachable by the route planner.
+    if (line.branches) {
+      line.branches.forEach(branch => {
+        let prev = stns[stns.length - 1];
+        branch.forEach(id => {
+          if (adj[id] && adj[prev]) {
+            adj[id].push({ id: prev, line: lineKey });
+            adj[prev].push({ id, line: lineKey });
+          }
+          prev = id;
+        });
+      });
+    }
   });
 
   // BFS
