@@ -1374,15 +1374,22 @@ function UpcomingMetroScreen() {
   const [lastFetch, setLastFetch]     = useState('');
 
   useEffect(() => {
+    // Guard against setting state after the user leaves the screen mid-fetch
+    let cancelled = false;
     setNewsLoading(true);
     fetch(UPDATES_URL)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: { updates?: MetroNews[]; lastUpdated?: string }) => {
+        if (cancelled) return;
         if (Array.isArray(data.updates)) setNews(data.updates);
         if (data.lastUpdated) setLastFetch(data.lastUpdated);
       })
       .catch(() => {/* offline — show empty */})
-      .finally(() => setNewsLoading(false));
+      .finally(() => { if (!cancelled) setNewsLoading(false); });
+    return () => { cancelled = true; };
   }, []);
 
   return (
