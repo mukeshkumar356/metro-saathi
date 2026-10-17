@@ -8,6 +8,10 @@ import { LINES } from '../data/lines';
  * Electronic City branches). Branch stations are linked back to the last
  * station of their parent line, so they're reachable like any other stop.
  *
+ * Interchange stations (e.g. Rajiv Chowk) are stored once per line under
+ * separate ids, so records sharing a name and coordinates are linked with
+ * `transfer` edges; without them no route could cross between lines.
+ *
  * Pulled out of RouteScreen into its own module so the pathfinding logic
  * can be unit-tested independently of any React Native rendering.
  */
@@ -39,6 +43,16 @@ export const findRoute = (fromId, toId) => {
         });
       });
     }
+  });
+
+  const byPlace = {};
+  STATIONS.forEach(s => {
+    (byPlace[`${s.name}|${s.lat}|${s.lng}`] ||= []).push(s);
+  });
+  Object.values(byPlace).forEach(group => {
+    group.forEach(a => group.forEach(b => {
+      if (a.id !== b.id) adj[a.id].push({ id: b.id, line: b.line, transfer: true });
+    }));
   });
 
   const visited = new Set();

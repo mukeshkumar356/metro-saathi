@@ -34,4 +34,12 @@ describe('findRoute', () => {
   it('returns null for an unknown station id', () => {
     expect(findRoute('DW21', 'NOT-A-REAL-STATION')).toBeNull();
   });
+
+  it('transfers between lines at an interchange (Yellow to Blue at Rajiv Chowk)', () => {
+    const path = findRoute('CK', 'BK');
+    expect(path).not.toBeNull();
+    expect(path[0].id).toBe('CK');
+    expect(path[path.length - 1].id).toBe('BK');
+    expect(path.some(step => step.transfer)).toBe(true);
+  });
 });

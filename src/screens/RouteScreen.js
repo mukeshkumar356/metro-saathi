@@ -154,7 +154,7 @@ export default function RouteScreen({ route }) {
         )}
 
         {routeResult && routeResult.length > 0 && (() => {
-          const stationCount = routeResult.length;
+          const stationCount = routeResult.filter(step => !step.transfer).length;
           const fare = getFareByStations(stationCount);
           const interchanges = getInterchanges(routeResult);
           const time = Math.round(stationCount * 2.5);
