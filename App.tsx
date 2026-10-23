@@ -880,8 +880,9 @@ function RouteScreen({ initFrom, initTo }: { initFrom?: any; initTo?: any }) {
     return segs;
   }, [route]);
 
-  const totalStations = route?.length || 0;
-  const stops        = Math.max(0, totalStations - 1);          // hops (excludes start)
+  // Hops excluding the start; walking between the two records of an interchange
+  // station ('interchange' edge) is not a metro stop, so it must not add to fare/time/distance.
+  const stops        = route ? route.slice(1).filter(step => step.line !== 'interchange').length : 0;
   const changes      = Math.max(0, segments.length - 1);
   const fare         = stops > 0 ? getFareByStations(stops) : 0;
   const distKm       = (stops * 1.4).toFixed(1);               // ~1.4 km avg per stop
