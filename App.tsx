@@ -867,11 +867,13 @@ function RouteScreen({ initFrom, initTo }: { initFrom?: any; initTo?: any }) {
       const s = stationMap[step.id];
       if (!s) return;
       if (step.line && step.line !== 'interchange' && step.line !== curLk) {
-        if (cur.length > 0) segs.push({ lk: curLk, stations: cur });
+        // The origin step has no line yet: fold it into the first real segment
+        // instead of emitting a phantom lineless segment (which inflated "changes").
+        if (curLk) segs.push({ lk: curLk, stations: cur });
+        cur = curLk ? [s] : [...cur, s];
         curLk = step.line;
-        cur = [s];
       } else if (step.line === 'interchange') {
-        if (cur.length > 0) cur.push(s);
+        if (curLk && cur.length > 0) cur.push(s);
       } else {
         cur.push(s);
       }
