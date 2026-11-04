@@ -235,6 +235,9 @@ const getDirection = (lk: string, fromId: string, toId: string): string => {
       if (bfi !== -1 && bti !== -1) return bfi < bti ? `Towards ${line.to}` : `Towards ${line.from}`;
     }
     if (arr.indexOf(fromId) !== -1) return `Towards ${line.to}`;
+    // Travelling from a branch back onto the main line heads towards the line's start
+    if (arr.indexOf(toId) !== -1 && (line.branches as string[][]).some(br => br.indexOf(fromId) !== -1))
+      return `Towards ${line.from}`;
   }
   return `Towards ${line.to}`;
 };
