@@ -852,9 +852,14 @@ function RouteScreen({ initFrom, initTo }: { initFrom?: any; initTo?: any }) {
   useEffect(() => { if (initFrom) setFrom(initFrom); }, [initFrom]);
   useEffect(() => { if (initTo) setTo(initTo); }, [initTo]);
 
+  // Interchange stations have one record per line (e.g. Rajiv Chowk on Yellow and Blue),
+  // so the same physical station can be picked twice with different ids.
+  const sameStation = !!from && !!to &&
+    (from.id === to.id || from.name.toLowerCase().trim() === to.name.toLowerCase().trim());
+
   const search = () => {
     if (!from || !to) return;
-    if (from.id === to.id) { setRoute(null); setSearched(true); return; }
+    if (sameStation) { setRoute(null); setSearched(true); return; }
     setRoute(findRoute(from.id, to.id));
     setSearched(true);
   };
@@ -927,13 +932,13 @@ function RouteScreen({ initFrom, initTo }: { initFrom?: any; initTo?: any }) {
         {searched && !route && (
           <View style={{ alignItems: 'center', padding: 40 }}>
             <Text style={{ fontSize: 40, marginBottom: 16 }}>
-              {from?.id === to?.id ? '📍' : '🚫'}
+              {sameStation ? '📍' : '🚫'}
             </Text>
             <Text style={{ color: ACCENT, fontSize: 16, fontWeight: '700', textAlign: 'center' }}>
-              {from?.id === to?.id ? 'Source and destination are the same!' : 'No route found between these stations.'}
+              {sameStation ? 'Source and destination are the same!' : 'No route found between these stations.'}
             </Text>
             <Text style={{ color: MUTED, fontSize: 13, marginTop: 8, textAlign: 'center' }}>
-              {from?.id === to?.id ? 'Please select two different stations.' : 'Check that both stations are on the Delhi Metro network.'}
+              {sameStation ? 'Please select two different stations.' : 'Check that both stations are on the Delhi Metro network.'}
             </Text>
           </View>
         )}
